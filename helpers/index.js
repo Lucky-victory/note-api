@@ -15,36 +15,26 @@ const getDateDiff = (diff = 30, after = true) => {
 const getDateInMilliseconds = (date = new Date().getTime()) =>
   new Date(date).getTime();
 
-// get token from authorization header or from request 'api_key' query params
-const getTokenFromHeaderOrQuery = (req) => {
-  const authInHeader = req.headers && req.headers["authorization"];
-  const authInQuery = req.query.api_key;
-  let token;
-  if (authInHeader) {
-    // split the authorization property and get the second part, e.g Bearer ggu5-fjdi..
-    token = authInHeader.split(" ")[1];
-    return [token, null];
-  } else if (authInQuery) {
-    token = authInQuery;
-    return [token, null];
-  }
-  return [null, "No token provided"];
-};
-
-// check if a value is null or undefined
+/**
+ check if a value is null or undefined
+ * 
+ */
 const NullOrUndefined = (value) => {
   return (
     Object.prototype.toString.call(value) == "[object Null]" ||
     Object.prototype.toString.call(value) == "[object Undefined]"
   );
 };
-
-// check if a value is empty
+/**
+ * check if a value is empty
+ */
 const isEmpty = (value) => {
   return NullOrUndefined(value) || !Object.keys(value).length || value === "";
 };
 
-// get apikey from the database by the token
+/** 
+ get apikey from the database and validate it
+ * */
 
 const getApiKeyFromDB = async (key) => {
   try {
@@ -61,6 +51,8 @@ const getApiKeyFromDB = async (key) => {
 
     if (!userKey) {
       return [null, "invalid key"];
+    } else if (userKey && userKey.revoked) {
+      return [null, "this key has been revoked, please generate a new one"];
     } else if (userKey && hasExpired) {
       await ApiKeys.update([
         {
@@ -75,7 +67,11 @@ const getApiKeyFromDB = async (key) => {
     return [null, error];
   }
 };
-
+/**
+ *
+ * @param {string} id
+ * @returns
+ */
 const getUserById = async (id) => {
   try {
     const user = await Users.findOne({ id }, ["id"]);
@@ -89,19 +85,44 @@ const getUserById = async (id) => {
   }
 };
 
+/**
+ *
+ * generate api key
+ */
 const generateApiKey = () => {
   const key = uuid.v4();
 
   return key;
 };
-
+/**
+ create new api key and store it in the database
+ * 
+ */
+const createNewApiKey = async (userId, expireIn = 30) => {
+  if (isEmpty(userId)) throw new Error("'userId' is required");
+  const key = generateApiKey();
+  // expiry date in milliseconds
+  const expiresIn = getDateDiff(expireIn);
+  const expired = false;
+  const revoked = false;
+  const createdAt = getDateInMilliseconds();
+  await ApiKeys.create({
+    userId,
+    key,
+    revoked,
+    expired,
+    expiresIn,
+    createdAt,
+  });
+  return { apikey: key };
+};
 module.exports = {
   getDateInMilliseconds,
   getDateDiff,
   getUserById,
-  getTokenFromHeaderOrQuery,
   NullOrUndefined,
   isEmpty,
   getApiKeyFromDB,
   generateApiKey,
+  createNewApiKey,
 };

@@ -1,8 +1,15 @@
 const express = require("express");
-const { createNewUser } = require("../controllers/users.controller");
+const {
+  generateNewApiKey,
+  revokeApiKey,
+  dropApiKey,
+} = require("../controllers/apikey.controller");
+const { getTokenFromHeaderOrQuery } = require("../middlewares");
+
 const router = express.Router();
 
-router.post("/generate", createNewUser);
-router.delete("/drop/:token", createNewUser);
+router.post("/generate", getTokenFromHeaderOrQuery, generateNewApiKey);
+router.post("/revoke", getTokenFromHeaderOrQuery, revokeApiKey);
+router.delete("/drop/:token", getTokenFromHeaderOrQuery, dropApiKey);
 
 module.exports = router;

@@ -2,11 +2,10 @@ const bcrypt = require("bcrypt");
 
 const {
   isEmpty,
-  generateApiKey,
-  getDateDiff,
   getDateInMilliseconds,
+  createNewApiKey,
 } = require("../helpers");
-const ApiKeys = require("../models/apikeys.model");
+
 const Users = require("../models/users.model");
 
 const getUserByEmail = async (email) => {
@@ -37,10 +36,10 @@ const createNewUser = async (req, res) => {
       isEmpty(lastName)
     ) {
       return res.status(400).json({
-        message: "please provide `email`,`password`, `firstName`,`lastName`",
+        message: "please provide 'email','password', 'firstName','lastName'",
       });
     }
-    // check if the password is strong
+    // check if the password is strong, *this could be done at the frontend*
 
     // check if user with email already exist
     const [user] = await getUserByEmail(email);
@@ -63,55 +62,61 @@ const createNewUser = async (req, res) => {
     // get the id of the new user
     const { inserted_hashes } = await Users.create(newUser);
     const userId = inserted_hashes[0];
+    const { apikey } = await createNewApiKey(userId);
 
-    // generate api key
-    const key = generateApiKey();
-    // set expiry date for key
-    const expiresIn = getDateDiff();
-
-    await ApiKeys.create({
-      userId,
-      key,
-      expired: false,
-      expiresIn,
-    });
     res.status(200).json({
       message: "your registration was successful",
-      apikey: key,
+      apikey,
     });
   } catch (error) {
     res.status(500).json({
       error,
-      message: "an error has occurred",
+      message: "an error occurred",
     });
   }
 };
 
 const loginUser = async (req, res) => {
-  const { email, password } = req.body;
-  if (isEmpty(email) || isEmpty(password)) {
-    return res.status(400).json({
-      message: " 'email' and 'password' are required",
-    });
-  }
+  try {
+    const { email, password } = req.body;
+    if (isEmpty(email) || isEmpty(password)) {
+      return res.status(400).json({
+        message: " 'email' and 'password' are required",
+      });
+    }
 
-  const [user, userErrorMessage] = await getUserByEmail(email);
-  if (userErrorMessage) {
-    return res.status(400).json({
-      message: userErrorMessage,
+    const [user, userEmailErrorMessage] = await getUserByEmail(email);
+    if (userEmailErrorMessage) {
+      return res.status(404).json({
+        message: userEmailErrorMessage,
+      });
+    }
+    // compare password to see if it matches the one in the database
+    const previousPassword = user.password;
+    const passwordMatch = await bcrypt.compare(
+      String(password),
+      previousPassword
+    );
+    if (!passwordMatch) {
+      return res.status(400).json({
+        message: "invalid credentials",
+      });
+    }
+
+    const { apikey } = await createNewApiKey(user.id);
+    res.status(200).json({
+      message: "login successful",
+      apikey,
     });
-  }
-  // compare password to see if it matches the one in the database
-  const previousPassword = user.password;
-  const passwordMatch = await bcrypt.compare(
-    String(password),
-    previousPassword
-  );
-  if (!passwordMatch) {
-    return res.status(400).json({});
+  } catch (error) {
+    res.status(500).json({
+      error,
+      message: "an error occurred",
+    });
   }
 };
 module.exports = {
   createNewUser,
   getUserByEmail,
+  loginUser,
 };

@@ -1,0 +1,16 @@
+###
+GET http://localhost:4420
+
+###
+GET http://localhost:4420/myNotes?api_key=e3295046-660a-47c4-958f-11d47418251
+
+###
+POST http://localhost:4420/account/signUp
+Content-Type: application/json
+
+{
+    "email":"bliz@gm.org",
+    "password":"23456",
+    "firstName":"mr veek",
+    "lastName":"lucky"
+}
