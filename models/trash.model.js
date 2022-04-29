@@ -6,7 +6,7 @@ const NotesSchema=new Schema({
     fields:{
         userId:String,
         noteId:String,
-        deletedAt:Number
+        deletedAt:Date
 }
 });
 
