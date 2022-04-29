@@ -10,9 +10,11 @@ const getTokenFromQuery = (req, res, next) => {
   const authInQuery = req.query.api_key;
 
   if (authInQuery) {
-    req.token = authInQuery;
+    
     // append the token to request object, so it can be access by other middlewares
-    next();
+req.token = authInQuery;
+   
+ next();
     return;
   }
   res.status(403).json({ message: "No token provided " });
@@ -23,7 +25,7 @@ const getTokenFromQuery = (req, res, next) => {
  
  * */
 
-// @ts-ignore
+
 const validateToken = expressAsyncHandler(async (req, res, next) => {
   try {
     // @ts-ignore
@@ -37,15 +39,18 @@ const validateToken = expressAsyncHandler(async (req, res, next) => {
     ]);
     console.log(userKey);
     if (!userKey) {
-      return res.status(400).json({ message: "invalid token" });
-    }
+       
+res.status(400).json({ message: "invalid token" });
+return   
+ }
     // check if the key has expired
     const currentDate = getDateInMilliseconds();
     const hasExpired = currentDate >= getDateInMilliseconds(userKey.expiresIn);
     if (userKey && userKey.revoked) {
-      return res.status(400).json({
+       res.status(400).json({
         message: "this key has been revoked, please generate a new one",
       });
+return
     } else if (userKey && hasExpired) {
       await ApiKeys.update([
         {
@@ -53,9 +58,10 @@ const validateToken = expressAsyncHandler(async (req, res, next) => {
           expired: true,
         },
       ]);
-      return res.status(400).json({
+     res.status(400).json({
         message: "your apikey has expired, you should generate a new one",
       });
+return
     }
     // @ts-ignore
     req.userKey = userKey;
