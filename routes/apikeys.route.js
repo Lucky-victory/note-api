@@ -3,13 +3,13 @@ const {
   generateNewApiKey,
   revokeApiKey,
   dropApiKey,
-} = require("../controllers/apikey.controller");
-const { getTokenFromHeaderOrQuery } = require("../middlewares");
+} = require("../controllers/apikeys.controller");
+const { getTokenFromQuery, validateToken } = require("../middlewares");
 
 const router = express.Router();
 
-router.post("/generate", getTokenFromHeaderOrQuery, generateNewApiKey);
-router.post("/revoke", getTokenFromHeaderOrQuery, revokeApiKey);
-router.delete("/drop/:token", getTokenFromHeaderOrQuery, dropApiKey);
+router.post("/generate", getTokenFromQuery, validateToken, generateNewApiKey);
+router.put("/revoke/:token", getTokenFromQuery, validateToken, revokeApiKey);
+router.delete("/drop/:token", getTokenFromQuery, validateToken, dropApiKey);
 
 module.exports = router;

@@ -2,15 +2,38 @@
 GET http://localhost:4420
 
 ###
-GET http://localhost:4420/myNotes?api_key=e3295046-660a-47c4-958f-11d47418251
+GET http://localhost:4420/myNotes?api_key=0825a21f-a187-41d9-a4ea-fc0c409f7e67
+###fe6b87a5-5d18-471b-971e-0b2c5de5ae8e 1e648779-2769-498e-953f-ad96bb01870b
 
 ###
+PUT http://localhost:4420/notes/edit/02155bc9-ebd4-4da7-9fca-ab57231fa89f?api_key=842b9126-2fcd-4fb9-ae46-18435949e0ab
+
 POST http://localhost:4420/account/signUp
 Content-Type: application/json
 
 {
-    "email":"bliz@gm.org",
+    "email":"bliz25@gm.org",
     "password":"23456",
     "firstName":"mr veek",
     "lastName":"lucky"
+}
+
+###
+POST http://localhost:4420/account/signIn
+Content-Type: application/json
+
+{
+    "email":"bliz@gm.org",
+    "password":"23456"
+}
+
+###
+DELETE  http://localhost:4420/tokens/drop/45fa0968-7c94-4633-9987-bbf1f3f78b59?api_key=45fa0968-7c94-4633-9987-bbf1f3f78b59
+###
+POST http://localhost:4420/notes/new?api_key=842b9126-2fcd-4fb9-ae46-18435949e0ab
+Content-Type: application/json
+
+{
+"title":"a new note title  by bliz 444",
+"body":"a body of the note by bliz 444"
 }

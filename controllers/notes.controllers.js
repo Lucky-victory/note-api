@@ -1,21 +1,13 @@
 const {
   isEmpty,
   getUserById,
-  getApiKeyFromDB,
   getDateInMilliseconds,
 } = require("../helpers");
 const Notes = require("../models/notes.model");
 
 const createNewNote = async (req, res) => {
   try {
-    const { token } = req;
-
-    const [userKey, userKeyErrorMessage] = await getApiKeyFromDB(token);
-    if (userKeyErrorMessage) {
-      return res.status(400).json({
-        message: userKeyErrorMessage,
-      });
-    }
+   const {userKey}=req;
 
     const [user, userErrorMessage] = await getUserById(userKey.userId);
     if (userErrorMessage) {
@@ -85,13 +77,7 @@ const getNoteById = async (id) => {
 };
 const getNotesByUser = async (req, res) => {
   try {
-    const { token } = req;
-    const [userKey, userKeyErrorMessage] = await getApiKeyFromDB(token);
-    if (userKeyErrorMessage) {
-      return res.status(400).json({
-        message: userKeyErrorMessage,
-      });
-    }
+   const {userKey}=req;
 
     const [user, userErrorMessage] = await getUserById(userKey.userId);
     if (userErrorMessage) {
@@ -116,15 +102,8 @@ const getNotesByUser = async (req, res) => {
 };
 const editNote = async (req, res) => {
   try {
-    const { token } = req;
-    const [keyResult, keyErrorMessage] = await getApiKeyFromDB(token);
-    if (keyErrorMessage) {
-      return res.status(400).json({
-        message: keyErrorMessage,
-      });
-    }
-
-    const [user, userErrorMessage] = await getUserById(keyResult.userId);
+   const {userKey}=req;
+    const [user, userErrorMessage] = await getUserById(userKey.userId);
     if (userErrorMessage) {
       return res.status(404).json({
         message: userErrorMessage,

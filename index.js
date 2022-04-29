@@ -17,10 +17,14 @@ app.use(
   })
 );
 
+// disable header E-tag
+app.set("etag", false);
+
+// set routes
 app.use("/myNotes", userNotesRouter);
 app.use("/notes", notesRouter);
 app.use("/account", usersRouter);
-app.use("/token", tokenRouter);
+app.use("/tokens", tokenRouter);
 app.get("/", (req, res) => {
   res.send("hello notes API ");
 });

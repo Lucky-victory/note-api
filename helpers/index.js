@@ -32,41 +32,6 @@ const isEmpty = (value) => {
   return NullOrUndefined(value) || !Object.keys(value).length || value === "";
 };
 
-/** 
- get apikey from the database and validate it
- * */
-
-const getApiKeyFromDB = async (key) => {
-  try {
-    const userKey = await ApiKeys.findOne({ key }, [
-      "id",
-      "userId",
-      "expired",
-      "expiresIn",
-    ]);
-
-    // check if the key has expired
-    const currentDate = getDateInMilliseconds();
-    const hasExpired = currentDate >= getDateInMilliseconds(userKey.expiresIn);
-
-    if (!userKey) {
-      return [null, "invalid key"];
-    } else if (userKey && userKey.revoked) {
-      return [null, "this key has been revoked, please generate a new one"];
-    } else if (userKey && hasExpired) {
-      await ApiKeys.update([
-        {
-          id: userKey.id,
-          expired: true,
-        },
-      ]);
-      return [null, "your apikey has expired, you should generate a new one"];
-    }
-    return [userKey, null];
-  } catch (error) {
-    return [null, error];
-  }
-};
 /**
  *
  * @param {string} id
@@ -122,7 +87,6 @@ module.exports = {
   getUserById,
   NullOrUndefined,
   isEmpty,
-  getApiKeyFromDB,
   generateApiKey,
   createNewApiKey,
 };
