@@ -10,7 +10,7 @@ const generateNewApiKey = async (req, res) => {
       apikey,
     });
   } catch (error) {
-    res.statsu(500).json({
+    res.status(500).json({
       error,
       message: "an error occurred",
     });
