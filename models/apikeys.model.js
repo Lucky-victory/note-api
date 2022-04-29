@@ -7,7 +7,7 @@ const NotesSchema = new Schema({
     key: String,
     createdAt: Date,
     expired: Boolean,
-    expiresIn: Number,
+    expiresIn: Date,
     revoked: Boolean,
   },
 });
