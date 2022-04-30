@@ -1,15 +1,15 @@
-const {Schema,Model}=require('harpee');
+const { Schema, Model } = require("harpee");
 
-
-const NotesSchema=new Schema({
-    name:'NotesSchema',
-    fields:{
-        userId:String,
-        noteId:String,
-        deletedAt:Date
-}
+const NotesSchema = new Schema({
+  name: "NotesSchema",
+  fields: {
+    userId: String,
+    noteId: String,
+    deletedAt: Date,
+  },
+  primaryKey: "id",
 });
 
-const Trash=new Model('Trash',NotesSchema);
+const Trash = new Model("Trash", NotesSchema);
 
-module.exports=Trash;
+module.exports = Trash;

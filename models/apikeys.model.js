@@ -10,6 +10,7 @@ const NotesSchema = new Schema({
     expiresIn: Date,
     revoked: Boolean,
   },
+  primaryKey: "id",
 });
 
 const ApiKeys = new Model("ApiKeys", NotesSchema);

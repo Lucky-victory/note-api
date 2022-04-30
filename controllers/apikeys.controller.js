@@ -1,10 +1,14 @@
-const { createNewApiKey } = require("../helpers");
+const {
+  createNewApiKey,
+  authorizeUser,
+  getApiKeyFromDB,
+} = require("../helpers");
 const ApiKeys = require("../models/apikeys.model");
 
 const generateNewApiKey = async (req, res) => {
   try {
-    const { userKey } = req;
-    const { apikey } = await createNewApiKey(userKey.userId);
+    const { user } = req;
+    const { apikey } = await createNewApiKey(user.id);
     res.status(200).json({
       message: "successfully generated new apikey",
       apikey,
@@ -18,7 +22,21 @@ const generateNewApiKey = async (req, res) => {
 };
 const revokeApiKey = async (req, res) => {
   try {
-    const { userKey } = req;
+    const key = req.params.token;
+    const { user } = req;
+    const [userKey, userKeyError] = await getApiKeyFromDB(key);
+    if (userKeyError) {
+      res.status(400).json({
+        message: userKeyError,
+      });
+      return;
+    }
+    const authError = authorizeUser(user, userKey);
+    if (authError) {
+      return res.status(401).json({
+        message: authError,
+      });
+    }
 
     await ApiKeys.update([
       {
@@ -36,11 +54,26 @@ const revokeApiKey = async (req, res) => {
     });
   }
 };
+
 const dropApiKey = async (req, res) => {
   try {
-    const keyToDrop = req.params.token;
+    const key = req.params.token;
+    const { user } = req;
+    const [userKey, userKeyError] = await getApiKeyFromDB(key);
+    if (userKeyError) {
+      res.status(400).json({
+        message: userKeyError,
+      });
+      return;
+    }
+    const authError = authorizeUser(user, userKey);
+    if (authError) {
+      return res.status(401).json({
+        message: authError,
+      });
+    }
 
-    await ApiKeys.findAndRemove({ key: keyToDrop });
+    await ApiKeys.findAndRemove({ key });
     res.status(204);
   } catch (error) {
     res.status(500).json({

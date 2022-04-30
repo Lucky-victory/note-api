@@ -1,6 +1,6 @@
-const { getDateInMilliseconds } = require("../helpers");
+const { getDateInMilliseconds, getApiKeyFromDB } = require("../helpers");
 const ApiKeys = require("../models/apikeys.model");
-const expressAsyncHandler = require("express-async-handler");
+const Users = require("../models/users.model");
 
 /**
  * 
@@ -10,11 +10,10 @@ const getTokenFromQuery = (req, res, next) => {
   const authInQuery = req.query.api_key;
 
   if (authInQuery) {
-    
     // append the token to request object, so it can be access by other middlewares
-req.token = authInQuery;
-   
- next();
+    req.token = authInQuery;
+
+    next();
     return;
   }
   res.status(403).json({ message: "No token provided " });
@@ -25,52 +24,68 @@ req.token = authInQuery;
  
  * */
 
-
-const validateToken = expressAsyncHandler(async (req, res, next) => {
+const validateToken = async (req, res, next) => {
   try {
-    // @ts-ignore
     const key = req.token;
-    const userKey = await ApiKeys.findOne({ key }, [
-      "id",
-      "userId",
-      "expired",
-      "expiresIn",
-      "revoked",
-    ]);
-    console.log(userKey);
-    if (!userKey) {
-       
-res.status(400).json({ message: "invalid token" });
-return   
- }
+    const [userKey, userKeyError] = await getApiKeyFromDB(key);
+    if (userKeyError) {
+      res.status(400).json({ message: userKeyError });
+      return;
+    }
     // check if the key has expired
     const currentDate = getDateInMilliseconds();
     const hasExpired = currentDate >= getDateInMilliseconds(userKey.expiresIn);
     if (userKey && userKey.revoked) {
-       res.status(400).json({
+      res.status(400).json({
         message: "this key has been revoked, please generate a new one",
       });
-return
+
+      return;
     } else if (userKey && hasExpired) {
+      // updated Apikey table and set the token to 'expired'
       await ApiKeys.update([
         {
           id: userKey.id,
           expired: true,
         },
       ]);
-     res.status(400).json({
+      res.status(400).json({
         message: "your apikey has expired, you should generate a new one",
       });
-return
+      return;
     }
-    // @ts-ignore
     req.userKey = userKey;
     next();
   } catch (error) {
     res.status(500).json({ message: "an error occured", error });
   }
-});
+};
+/**
+ *
+ * get user by 'id' and set it as a property to 'req' object
+ *
+ */
+const getUserById = async (req, res, next) => {
+  try {
+    const { userKey } = req;
+    const user = await Users.findOne({ id: userKey.userId }, ["id"]);
+    if (!user) {
+      res.status(404).json({ message: "user not found" });
+      return;
+    }
+
+    req.user = user;
+    next();
+  } catch (error) {
+    res.status(500).json({
+      message: "an error coccurred",
+      error,
+    });
+  }
+};
+
 module.exports = {
   getTokenFromQuery,
   validateToken,
+  getUserById,
 };

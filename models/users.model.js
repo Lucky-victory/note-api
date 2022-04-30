@@ -9,6 +9,7 @@ const NotesSchema = new Schema({
     email: String,
     password: String,
   },
+  primaryKey: "id",
 });
 
 const Users = new Model("Users", NotesSchema);

@@ -1,6 +1,6 @@
 const uuid = require("uuid");
 const ApiKeys = require("../models/apikeys.model");
-const Users = require("../models/users.model");
+const Notes = require("../models/notes.model");
 
 // get date after/ before current date,  default is 30days after today
 const getDateDiff = (diff = 30, after = true) => {
@@ -34,27 +34,9 @@ const isEmpty = (value) => {
 
 /**
  *
- * @param {string} id
- * @returns
- */
-const getUserById = async (id) => {
-  try {
-    const user = await Users.findOne({ id }, ["id"]);
-    if (!user) {
-      return [null, "user not found"];
-    }
-
-    return [user, null];
-  } catch (error) {
-    return [null, error];
-  }
-};
-
-/**
- *
  * generate api key
  */
-const generateApiKey = () => {
+const generateToken = () => {
   const key = uuid.v4();
 
   return key;
@@ -65,7 +47,7 @@ const generateApiKey = () => {
  */
 const createNewApiKey = async (userId, expireIn = 30) => {
   if (isEmpty(userId)) throw new Error("'userId' is required");
-  const key = generateApiKey();
+  const key = generateToken();
   // expiry date in milliseconds
   const expiresIn = getDateDiff(expireIn);
   const expired = false;
@@ -81,12 +63,66 @@ const createNewApiKey = async (userId, expireIn = 30) => {
   });
   return { apikey: key };
 };
+
+/**
+ *
+ * @param {string} id
+ * @returns
+ */
+const getNoteById = async (id) => {
+  try {
+    const note = await Notes.findOne({ id }, [
+      "id",
+      "title",
+      "body",
+      "userId",
+      "createdAt",
+      "modifiedAt",
+    ]);
+
+    if (!note) {
+      return [null, `note with '${id}' was not found`];
+    }
+
+    return [note, null];
+  } catch (error) {
+    return [null, error];
+  }
+};
+/**
+ * check if the user is authorized to access a resource
+ */
+const authorizeUser = (user, resource) => {
+  if (resource.userId !== user.id) {
+    return "Unauthorized, not allowed to access this resource";
+  }
+};
+
+const getApiKeyFromDB = async (key) => {
+  try {
+    const userKey = await ApiKeys.findOne({ key }, [
+      "id",
+      "userId",
+      "expired",
+      "expiresIn",
+      "revoked",
+    ]);
+    if (!userKey) {
+      return [null, "invalid token"];
+    }
+    return [userKey, null];
+  } catch (error) {
+    return [null, error];
+  }
+};
 module.exports = {
   getDateInMilliseconds,
   getDateDiff,
-  getUserById,
+  getNoteById,
   NullOrUndefined,
   isEmpty,
-  generateApiKey,
+  generateToken,
   createNewApiKey,
+  authorizeUser,
+  getApiKeyFromDB,
 };

@@ -1,20 +1,16 @@
 const {
   isEmpty,
-  getUserById,
   getDateInMilliseconds,
+  authorizeUser,
+  getNoteById,
 } = require("../helpers");
 const Notes = require("../models/notes.model");
+const Trash = require("../models/trash.model");
 
 const createNewNote = async (req, res) => {
   try {
-   const {userKey}=req;
+    const { user } = req;
 
-    const [user, userErrorMessage] = await getUserById(userKey.userId);
-    if (userErrorMessage) {
-      return res.status(404).json({
-        message: userErrorMessage,
-      });
-    }
     const userId = user.id;
 
     if (isEmpty(req.body)) {
@@ -50,44 +46,14 @@ const createNewNote = async (req, res) => {
   }
 };
 
-/**
- *
- * @param {string} id
- * @returns
- */
-const getNoteById = async (id) => {
-  try {
-    const note = await Notes.findOne({ id }, [
-      "id",
-      "title",
-      "body",
-      "userId",
-      "createdAt",
-      "modifiedAt",
-    ]);
-
-    if (!note) {
-      return [null, `note with '${id}' was not found`];
-    }
-
-    return [note, null];
-  } catch (error) {
-    return [null, error];
-  }
-};
 const getNotesByUser = async (req, res) => {
   try {
-   const {userKey}=req;
+    const { user } = req;
 
-    const [user, userErrorMessage] = await getUserById(userKey.userId);
-    if (userErrorMessage) {
-      return res.status(404).json({
-        message: userErrorMessage,
-      });
-    }
     const notes = await Notes.find({
       getAttributes: ["id", "title", "body", "createdAt", "modifiedAt"],
-      where: `userId='${user.id}'`,
+      where: `userId='${user.id}' `,
+      and: " `deleted`=false",
     });
     res.status(200).json({
       message: `successfully retrieved notes`,
@@ -102,13 +68,7 @@ const getNotesByUser = async (req, res) => {
 };
 const editNote = async (req, res) => {
   try {
-   const {userKey}=req;
-    const [user, userErrorMessage] = await getUserById(userKey.userId);
-    if (userErrorMessage) {
-      return res.status(404).json({
-        message: userErrorMessage,
-      });
-    }
+    const { user } = req;
     const { note_id } = req.params;
     const [note, noteErrorMessage] = await getNoteById(note_id);
     if (noteErrorMessage) {
@@ -116,9 +76,17 @@ const editNote = async (req, res) => {
         message: noteErrorMessage,
       });
     }
-    if (note.userId !== user.id) {
+    const authError = authorizeUser(user, note);
+    if (authError) {
       return res.status(401).json({
-        message: "Unauthorized, not allowed to edit this note",
+        message: authError,
+      });
+    }
+
+    // check if the body object is empty
+    if (isEmpty(req.body)) {
+      return res.status(400).json({
+        message: "nothing to update",
       });
     }
     const noteToUpdate = req.body || {};
@@ -134,4 +102,86 @@ const editNote = async (req, res) => {
     });
   }
 };
-module.exports = { createNewNote, editNote, getNotesByUser };
+const moveNoteToTrash = async (req, res) => {
+  try {
+    const { user } = req;
+    const { note_id } = req.params;
+    const [note, noteErrorMessage] = await getNoteById(note_id);
+    if (noteErrorMessage) {
+      return res.status(404).json({
+        message: noteErrorMessage,
+      });
+    }
+    const authError = authorizeUser(user, note);
+    if (authError) {
+      return res.status(401).json({
+        message: authError,
+      });
+    }
+
+    await Notes.update([
+      {
+        id: note_id,
+        deleted: true,
+      },
+    ]);
+    const deletedAt = getDateInMilliseconds();
+    const noteToTrash = {
+      deletedAt,
+      userId: user.id,
+      noteId: note.id,
+    };
+    await Trash.create(noteToTrash);
+    res.status(200).json({
+      message: `successfully moved note with id ${note_id} to trash`,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "an error occurred,couldn't move note to trash",
+      error,
+    });
+  }
+};
+const moveNoteFromTrash = async (req, res) => {
+  try {
+    const { user } = req;
+    const noteId = req.params.note_id;
+    const [note, noteErrorMessage] = await getNoteById(noteId);
+    if (noteErrorMessage) {
+      return res.status(404).json({
+        message: noteErrorMessage,
+      });
+    }
+    const authError = authorizeUser(user, note);
+    if (authError) {
+      return res.status(401).json({
+        message: authError,
+      });
+    }
+
+    await Notes.update([
+      {
+        id: noteId,
+        deleted: false,
+      },
+    ]);
+
+    // remove note from Trash table
+    await Trash.findAndRemove({ noteId });
+    res.status(200).json({
+      message: `successfully removed note with id ${noteId} from trash`,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "an error occurred,couldn't move note to trash",
+      error,
+    });
+  }
+};
+module.exports = {
+  moveNoteFromTrash,
+  createNewNote,
+  editNote,
+  getNotesByUser,
+  moveNoteToTrash,
+};
