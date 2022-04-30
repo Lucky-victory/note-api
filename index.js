@@ -1,9 +1,11 @@
 const express = require("express");
+const port = process.env.PORT || 4420;
+const app = express();
 const { connectDB } = require("./config/db.config");
 connectDB();
 const morgan = require("morgan");
-const app = express();
-const port = process.env.PORT || 4420;
+const createError = require("http-errors");
+// routes
 const notesRouter = require("./routes/notes.route");
 const usersRouter = require("./routes/users.route");
 const tokenRouter = require("./routes/apikeys.route");
@@ -32,6 +34,9 @@ app.get("/", (req, res) => {
   res.send("hello notes API ");
 });
 
+app.use((req, res, next) => {
+  return next(createError(404));
+});
 app.listen(port, () => {
   console.log(`server running on port ${port}`);
 });
