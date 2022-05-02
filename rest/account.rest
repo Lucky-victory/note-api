@@ -1,0 +1,20 @@
+
+### Create an account
+POST http://localhost:4420/account/signUp
+Content-Type: application/json
+
+{
+    "email":"john@example.com",
+    "password":"1234",
+    "firstName":"john",
+    "lastName":"deo"
+}
+
+### login into an account, **you get a new api key whenever you login**
+POST http://localhost:4420/account/signIn
+Content-Type: application/json
+
+{
+    "email":"john@example.com",
+    "password":"1234"
+}

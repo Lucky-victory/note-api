@@ -5,6 +5,7 @@ const {
   editNote,
   getNotesByUser,
   moveNoteToTrash,
+  moveNoteFromTrash,
 } = require("../controllers/notes.controllers");
 const {
   getTokenFromQuery,
@@ -37,7 +38,7 @@ router.put(
   getUserById,
   editNote
 );
-router.delete(
+router.put(
   "/toTrash/:note_id",
   cors(),
   getTokenFromQuery,
@@ -45,13 +46,13 @@ router.delete(
   getUserById,
   moveNoteToTrash
 );
-router.post(
+router.put(
   "/outOfTrash/:note_id",
   cors(),
   getTokenFromQuery,
   validateToken,
   getUserById,
-  moveNoteToTrash
+  moveNoteFromTrash
 );
 
 module.exports = router;

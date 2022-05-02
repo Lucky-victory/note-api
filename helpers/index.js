@@ -81,7 +81,7 @@ const getNoteById = async (id) => {
     ]);
 
     if (!note) {
-      return [null, `note with '${id}' was not found`];
+      return [null, `note with id '${id}' was not found`];
     }
 
     return [note, null];

@@ -1,0 +1,8 @@
+
+
+### revoke an api key
+PUT http://localhost:4420/tokens/revoke/{THE API KEY YOU WANT TO REVOKE}?api_key={API KEY HERE}
+
+
+### drop/delete an api key
+DELETE http://localhost:4420/tokens/drop/{THE API KEY YOU WANT TO DROP}?api_key={API KEY HERE}

@@ -1,0 +1,26 @@
+### get all notes owned by a specific user
+GET http://localhost:4420/notes?api_key=e8daaa3f-2ec3-422f-961a-097407db063e
+
+### add new note
+POST http://localhost:4420/notes/new?api_key=e8daaa3f-2ec3-422f-961a-097407db063e
+Content-Type: application/json
+
+{
+"title":"a new note title 123",
+"body":"body of a new note"
+}
+
+### edit a note
+PUT http://localhost:4420/notes/edit/QUY3E4O_2FfSuh4X-26Cs?api_key=e8daaa3f-2ec3-422f-961a-097407db063e
+Content-Type: application/json
+
+{
+    "title":"an updated title",
+    "body":"an updated body"
+}
+
+### move a note to trash, **this doesn't permanently delete the note**
+PUT http://localhost:4420/notes/toTrash/QUY3E4O_2FfSuh4X-26Cs?api_key=e8daaa3f-2ec3-422f-961a-097407db063e
+
+### remove a note out from trash,
+PUT http://localhost:4420/notes/outOfTrash/QU3E4O_2FfSuh4X-26Cs?api_key=e8daaa3f-2ec3-422f-961a-097407db063e

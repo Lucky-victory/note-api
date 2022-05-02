@@ -1,0 +1,11 @@
+
+
+### get notes in trash
+GET http://localhost:4420/trash?api_key={API KEY HERE}
+
+
+### permanently delete a note IN Trash
+DELETE http://localhost:4420/trash/{NOTE ID}?api_key={ API KEY HERE }
+
+
+

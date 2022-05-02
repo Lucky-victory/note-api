@@ -6,6 +6,7 @@ const {
 } = require("../helpers");
 const Notes = require("../models/notes.model");
 const Trash = require("../models/trash.model");
+const { nanoid } = require("nanoid");
 
 const createNewNote = async (req, res) => {
   try {
@@ -27,6 +28,7 @@ const createNewNote = async (req, res) => {
     const createdAt = getDateInMilliseconds();
     const modifiedAt = createdAt;
     const newNote = {
+      id: nanoid(25),
       userId,
       title,
       body,
