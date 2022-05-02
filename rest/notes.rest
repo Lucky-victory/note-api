@@ -1,17 +1,17 @@
 ### get all notes owned by a specific user
-GET http://localhost:4420/notes?api_key=e8daaa3f-2ec3-422f-961a-097407db063e
+GET http://localhost:4420/notes?api_key={API KEY HERE}
 
 ### add new note
-POST http://localhost:4420/notes/new?api_key=e8daaa3f-2ec3-422f-961a-097407db063e
+POST http://localhost:4420/notes/new?api_key={API KEY HERE}
 Content-Type: application/json
 
 {
-"title":"a new note title 123",
+"title":"a new note title ",
 "body":"body of a new note"
 }
 
 ### edit a note
-PUT http://localhost:4420/notes/edit/QUY3E4O_2FfSuh4X-26Cs?api_key=e8daaa3f-2ec3-422f-961a-097407db063e
+PUT http://localhost:4420/notes/edit/{ NOTE ID }?api_key={API KEY HERE }
 Content-Type: application/json
 
 {
@@ -20,7 +20,7 @@ Content-Type: application/json
 }
 
 ### move a note to trash, **this doesn't permanently delete the note**
-PUT http://localhost:4420/notes/toTrash/QUY3E4O_2FfSuh4X-26Cs?api_key=e8daaa3f-2ec3-422f-961a-097407db063e
+PUT http://localhost:4420/notes/toTrash/{NOTE ID }?api_key={API KEY HERE }
 
 ### remove a note out from trash,
-PUT http://localhost:4420/notes/outOfTrash/QU3E4O_2FfSuh4X-26Cs?api_key=e8daaa3f-2ec3-422f-961a-097407db063e
+PUT http://localhost:4420/notes/outOfTrash/{NOTE ID }?api_key={API KEY HERE }
