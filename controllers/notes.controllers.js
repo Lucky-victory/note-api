@@ -34,11 +34,11 @@ const createNewNote = async (req, res) => {
       body,
       createdAt,
       modifiedAt,
-      deleted: false,
+      status:'active'
     };
     const { inserted_hashes } = await Notes.create(newNote);
     res.status(201).json({
-      message: `successfully added new note with id ${inserted_hashes[0]}`,
+      message: `successfully added new note with id '${inserted_hashes[0]}'`,
     });
   } catch (error) {
     res.status(500).json({
@@ -53,9 +53,9 @@ const getNotesByUser = async (req, res) => {
     const { user } = req;
 
     const notes = await Notes.find({
-      getAttributes: ["id", "title", "body", "createdAt", "modifiedAt"],
+      getAttributes: ["id", "title", "body", "createdAt", "modifiedAt","status"],
       where: `userId='${user.id}' `,
-      and: " `deleted`=false",
+      and: " status='active'",
     });
     res.status(200).json({
       message: `successfully retrieved notes`,
@@ -93,9 +93,10 @@ const editNote = async (req, res) => {
     }
     const noteToUpdate = req.body || {};
     noteToUpdate["id"] = note_id;
+    noteToUpdate["modifiedAt"] = getDateInMilliseconds();
     await Notes.update([noteToUpdate]);
     res.status(200).json({
-      message: `successfully updated note with id ${note_id}`,
+      message: `successfully updated note with id '${note_id}'`,
     });
   } catch (error) {
     res.status(500).json({
@@ -124,7 +125,7 @@ const moveNoteToTrash = async (req, res) => {
     await Notes.update([
       {
         id: note_id,
-        deleted: true,
+        status:'deleted'
       },
     ]);
     const deletedAt = getDateInMilliseconds();
@@ -135,7 +136,7 @@ const moveNoteToTrash = async (req, res) => {
     };
     await Trash.create(noteToTrash);
     res.status(200).json({
-      message: `successfully moved note with id ${note_id} to trash`,
+      message: `successfully moved note with id '${note_id}' to trash`,
     });
   } catch (error) {
     res.status(500).json({
@@ -164,7 +165,7 @@ const moveNoteFromTrash = async (req, res) => {
     await Notes.update([
       {
         id: noteId,
-        deleted: false,
+        status:'active'
       },
     ]);
 

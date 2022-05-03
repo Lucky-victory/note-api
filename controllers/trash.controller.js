@@ -7,9 +7,16 @@ const getNotesInTrash = async (req, res) => {
     const { user } = req;
 
     const notes = await Notes.find({
-      getAttributes: ["id", "title", "body", "createdAt", "modifiedAt"],
+      getAttributes: [
+        "id",
+        "title",
+        "body",
+        "createdAt",
+        "modifiedAt",
+        "status",
+      ],
       where: `userId='${user.id}' `,
-      and: "`deleted`=true",
+      and: "status='deleted'",
     });
     res.status(200).json({
       message: `successfully retrieved notes`,

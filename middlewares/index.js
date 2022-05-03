@@ -35,7 +35,7 @@ const validateToken = async (req, res, next) => {
     // check if the key has expired
     const currentDate = getDateInMilliseconds();
     const hasExpired = currentDate >= getDateInMilliseconds(userKey.expiresIn);
-    if (userKey && userKey.revoked) {
+    if (userKey && userKey.status == "revoked") {
       res.status(400).json({
         message: "this key has been revoked, please generate a new one",
       });
@@ -46,7 +46,7 @@ const validateToken = async (req, res, next) => {
       await ApiKeys.update([
         {
           id: userKey.id,
-          expired: true,
+          status: "expired",
         },
       ]);
       res.status(400).json({

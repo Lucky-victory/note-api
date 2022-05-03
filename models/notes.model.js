@@ -8,7 +8,7 @@ const NotesSchema = new Schema({
     body: String,
     createdAt: Date,
     modifiedAt: Date,
-    deleted: Boolean,
+    status: String,
   },
   primaryKey: "id",
 });

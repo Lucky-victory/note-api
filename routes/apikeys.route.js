@@ -13,7 +13,7 @@ const {
 const router = express.Router();
 
 router.post(
-  "/generate",
+  "/new",
   getTokenFromQuery,
   validateToken,
   getUserById,

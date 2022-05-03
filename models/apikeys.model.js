@@ -6,9 +6,8 @@ const NotesSchema = new Schema({
     userId: String,
     key: String,
     createdAt: Date,
-    expired: Boolean,
     expiresIn: Date,
-    revoked: Boolean,
+    status: String,
   },
   primaryKey: "id",
 });

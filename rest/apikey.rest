@@ -1,5 +1,8 @@
 
 
+### generate new api key
+POST http://localhost:4420/tokens/new?api_key={API KEY HERE}
+
 ### revoke an api key
 PUT http://localhost:4420/tokens/revoke/{THE API KEY YOU WANT TO REVOKE}?api_key={API KEY HERE}
 

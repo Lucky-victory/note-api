@@ -50,14 +50,11 @@ const createNewApiKey = async (userId, expireIn = 30) => {
   const key = generateToken();
   // expiry date in milliseconds
   const expiresIn = getDateDiff(expireIn);
-  const expired = false;
-  const revoked = false;
   const createdAt = getDateInMilliseconds();
   await ApiKeys.create({
     userId,
     key,
-    revoked,
-    expired,
+    status: "active",
     expiresIn,
     createdAt,
   });
@@ -78,6 +75,7 @@ const getNoteById = async (id) => {
       "userId",
       "createdAt",
       "modifiedAt",
+      "status",
     ]);
 
     if (!note) {
@@ -103,9 +101,8 @@ const getApiKeyFromDB = async (key) => {
     const userKey = await ApiKeys.findOne({ key }, [
       "id",
       "userId",
-      "expired",
+      "status",
       "expiresIn",
-      "revoked",
     ]);
     if (!userKey) {
       return [null, "invalid token"];

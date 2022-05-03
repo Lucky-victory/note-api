@@ -41,7 +41,7 @@ const revokeApiKey = async (req, res) => {
     await ApiKeys.update([
       {
         id: userKey.id,
-        revoked: true,
+        status: "revoked",
       },
     ]);
     res.status(200).json({
@@ -74,7 +74,7 @@ const dropApiKey = async (req, res) => {
     }
 
     await ApiKeys.findAndRemove({ key });
-    res.status(204);
+    res.sendStatus(204);
   } catch (error) {
     res.status(500).json({
       message: "an error occurred",
