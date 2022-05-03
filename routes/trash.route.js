@@ -10,10 +10,18 @@ const {
 } = require("../middlewares");
 
 const router = express.Router();
-
-router.get("/", getTokenFromQuery, validateToken, getUserById, getNotesInTrash);
+const cors = require("cors");
+router.get(
+  "/",
+  cors(),
+  getTokenFromQuery,
+  validateToken,
+  getUserById,
+  getNotesInTrash
+);
 router.delete(
   "/:note_id",
+  cors(),
   getTokenFromQuery,
   validateToken,
   getUserById,
