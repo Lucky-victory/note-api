@@ -4,6 +4,7 @@ const {
   isEmpty,
   getDateInMilliseconds,
   createNewApiKey,
+  emailValidator,
 } = require("../helpers");
 
 const Users = require("../models/users.model");
@@ -39,7 +40,13 @@ const createNewUser = async (req, res) => {
         message: "please provide 'email','password', 'firstName','lastName'",
       });
     }
-    // check if the password is strong, *this could be done at the frontend*
+    // check if the email is valid
+    const isValidEmail = emailValidator(email);
+    if (!isValidEmail) {
+      return res.status(400).json({
+        message: "invalid email address",
+      });
+    }
 
     // check if user with email already exist
     const [user] = await getUserByEmail(email);

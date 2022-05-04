@@ -2,6 +2,16 @@ const uuid = require("uuid");
 const ApiKeys = require("../models/apikeys.model");
 const Notes = require("../models/notes.model");
 
+/**
+ * @param {string} email
+ * 
+ */
+const emailValidator = (email) => {
+  const emailRegexp =
+    /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+
+  return emailRegexp.test(email);
+};
 // get date after/ before current date,  default is 30days after today
 const getDateDiff = (diff = 30, after = true) => {
   const now = new Date();
@@ -122,4 +132,5 @@ module.exports = {
   createNewApiKey,
   authorizeUser,
   getApiKeyFromDB,
+  emailValidator,
 };
