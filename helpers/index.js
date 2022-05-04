@@ -4,13 +4,13 @@ const Notes = require("../models/notes.model");
 
 /**
  * @param {string} email
- * 
+ *
  */
 const emailValidator = (email) => {
-  const emailRegexp =
-    /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+  const emailRegex =
+    /^[-!#$%&'*+\/0-9=?A-Z^_a-z{|}~](\.?[-!#$%&'*+\/0-9=?A-Z^_a-z`{|}~])*@[a-zA-Z0-9](-*\.?[a-zA-Z0-9])*\.[a-zA-Z](-?[a-zA-Z0-9])+$/;
 
-  return emailRegexp.test(email);
+  return emailRegex.test(email);
 };
 // get date after/ before current date,  default is 30days after today
 const getDateDiff = (diff = 30, after = true) => {
