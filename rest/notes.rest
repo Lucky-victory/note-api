@@ -20,7 +20,7 @@ Content-Type: application/json
 }
 
 ### move a note to trash, **this doesn't permanently delete the note**
-PUT http://localhost:4420/notes/toTrash/{NOTE ID }?api_key={API KEY HERE }
+PUT http://localhost:4420/notes/to-trash/{NOTE ID }?api_key={API KEY HERE }
 
 ### remove a note out from trash,
-PUT http://localhost:4420/notes/outOfTrash/{NOTE ID }?api_key={API KEY HERE }
+PUT http://localhost:4420/notes/out-of-trash/{NOTE ID }?api_key={API KEY HERE }

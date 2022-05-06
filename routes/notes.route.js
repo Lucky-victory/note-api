@@ -39,7 +39,7 @@ router.put(
   editNote
 );
 router.put(
-  "/toTrash/:note_id",
+  "/to-trash/:note_id",
   cors(),
   getTokenFromQuery,
   validateToken,
@@ -47,7 +47,7 @@ router.put(
   moveNoteToTrash
 );
 router.put(
-  "/outOfTrash/:note_id",
+  "/out-of-trash/:note_id",
   cors(),
   getTokenFromQuery,
   validateToken,
