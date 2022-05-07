@@ -28,7 +28,7 @@ Fill out the following placeholders with correct details.
 - `DB_USER`: your HarperDB instance username.
 - `DB_PASS`: your HarperDB instance password.
 
-Now, Run the following command.
+Now, Run the following commands.
 
 ```
  npm install
@@ -54,3 +54,22 @@ Now, Run the following command.
   - `/drop/:apikeyToDrop [method=delete]`: discard an apikey.
 - **/trash** `[method=get]`: fetch notes in trash.
   - `/trash/:noteID [method=delete]`: permanently discard a note.
+  
+ ## Example screenshots:
+  
+  ### acount route
+ ![Screenshot 2022-05-06 190623.png](https://cdn.hashnode.com/res/hashnode/image/upload/v1651914198853/s-_RdqUMz.png)
+ 
+![Screenshot 2022-05-06 190814.png](https://cdn.hashnode.com/res/hashnode/image/upload/v1651914208965/Zn3Oj8Su7.png)
+### tokens route
+![Screenshot 2022-05-07 090212.png](https://cdn.hashnode.com/res/hashnode/image/upload/v1651914105409/AHhcSmEYX.png)
+
+![Screenshot 2022-05-07 090406.png](https://cdn.hashnode.com/res/hashnode/image/upload/v1651914138626/XHODI7RJH.png)
+
+![Screenshot 2022-05-07 090832.png](https://cdn.hashnode.com/res/hashnode/image/upload/v1651914156762/Uq6iYXnI7.png)
+### notes route
+![Screenshot 2022-05-06 191149.png](https://cdn.hashnode.com/res/hashnode/image/upload/v1651913711402/pkaHPluAl.png)
+![Screenshot 2022-05-06 191408.png](https://cdn.hashnode.com/res/hashnode/image/upload/v1651913728989/DdZNnApdY.png)
+![Screenshot 2022-05-06 235000.png](https://cdn.hashnode.com/res/hashnode/image/upload/v1651913798388/Wq62qA-no.png)
+![Screenshot 2022-05-07 085836.png](https://cdn.hashnode.com/res/hashnode/image/upload/v1651913827851/sBuLRYyhq.png)
+![Screenshot 2022-05-07 085952.png](https://cdn.hashnode.com/res/hashnode/image/upload/v1651913839236/B9ZNWnMPp.png)
