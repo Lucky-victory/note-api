@@ -74,7 +74,9 @@ const dropApiKey = async (req, res) => {
     }
 
     await ApiKeys.findAndRemove({ key });
-    res.sendStatus(204);
+    res.status(200).json({
+      message: "key successfully dropped",
+    });
   } catch (error) {
     res.status(500).json({
       message: "an error occurred",

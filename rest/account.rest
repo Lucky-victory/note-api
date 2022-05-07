@@ -10,7 +10,7 @@ Content-Type: application/json
     "lastName":"doe"
 }
 
-### login into an account, **you get a new api key whenever you login**
+### login into an account, **user gets a new api key whenever they login**
 POST http://localhost:4420/account/sign-in
 Content-Type: application/json
 
