@@ -23,7 +23,7 @@ cp .env.example .env
 ```
 
 Fill out the following placeholders with correct details.
-
+> if you don't have a HarperDB account, you can [sign up](https://harperdb.io?utm_source=luckyvictory) for a free account.
 - `DB_HOST`: your HarperDB instance URL, e.g https://xxxxxxxxx.harperdbcloud.com
 - `DB_USER`: your HarperDB instance username.
 - `DB_PASS`: your HarperDB instance password.
