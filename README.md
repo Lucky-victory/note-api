@@ -2,6 +2,7 @@
 
 Note API built with NodeJS, Express and HarperDB.
 
+You can find the article for this API [here](https://viblog.hashnode.dev/build-a-note-keeping-api-with-nodejs-express-and-harperdb).
 ## How to use.
 
 Clone the repo
